@@ -11,4 +11,46 @@ The main branch is literally just this readme, maybe some shared code if that be
 
 ## NAS 
 
-This branch has my NAS setup and services. 
+This branch has my NAS setup and services. Target os is Ubuntu server 20.04. 
+
+### Installs on base os:
+- ansible
+- ZFS on linux
+- podman
+- podman-compose
+- fail2ban
+- tailscale
+- python3 (and pip3)
+
+### Configures following:
+- auto backups
+- auto import all zfs datasets connected to machine
+- tailscale
+- wg tunnels to cloudgw
+- admin user
+- groups and permissions for shared resources
+- maybe zfs dataset encryption
+- maybe fde
+
+### Installs containers to run following services:
+- samba
+- plex
+- emby
+- jellyfin
+- airsonic-advanced
+- hashtopolis
+- tinytinyrrs
+- boinc
+- radarr
+- lidarr 
+- sonarr
+- prowlarr
+- jacket
+- deluge
+- zoneminder
+- endlesssh
+- syncthing
+- cyberchef
+- searx
+- yacy
+- tdarr

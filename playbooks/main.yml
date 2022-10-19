@@ -1,0 +1,8 @@
+---
+vars:
+  admin_uname:
+  admin_pass:
+  tasks:
+  - import_tasks: install_zfs.yml
+  tags:
+    - install
