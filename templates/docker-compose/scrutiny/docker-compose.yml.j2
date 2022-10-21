@@ -1,0 +1,34 @@
+---
+version: "2.3"
+services:
+  scrutiny:
+    image: ghcr.io/linuxserver/scrutiny
+    container_name: scrutiny
+    cap_add:
+      - SYS_RAWIO
+    environment:
+      - PUID={ admin_user_id }
+      - PGID={ file_access_gid }
+      - TZ={ timezone }
+      - SCRUTINY_API_ENDPOINT=http://localhost:8080
+      - SCRUTINY_WEB=true
+      - SCRUTINY_COLLECTOR=true
+    volumes:
+      - scrutiny_config_vol:/config
+      - /run/udev:/run/udev:ro
+    ports:
+      - 8085:8080
+    devices:
+      - /dev/sda:/dev/sda
+      - /dev/sdb:/dev/sdb
+      - /dev/sdc:/dev/sdc
+      - /dev/sdd:/dev/sdd
+      - /dev/sde:/dev/sde
+      - /dev/sdg:/dev/sdg
+      - /dev/sdh:/dev/sdh
+      - /dev/sdi:/dev/sdi
+      - /dev/sdj:/dev/sdj
+      - /dev/sdk:/dev/sdk
+    restart: unless-stopped
+volumes:
+  scrutiny_config_vol:

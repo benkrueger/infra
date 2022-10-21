@@ -1,0 +1,17 @@
+---
+version: "2.3"
+services:
+    librespeed:
+        image: ghcr.io/linuxserver/librespeed
+        container_name: librespeed
+        environment:
+          - PUID={{ admin_user_id }}
+          - PGID={{ fileaccess_gid }}
+          - TZ={{ timezone }}
+          - PASSWORD={{ librespeed_password.stdout }}
+        volumes:
+          - ./librespeed/config:/config
+        ports:
+          - 8094:80
+        labels:
+          - "com.centurylinklabs.watchtower.enable=true"

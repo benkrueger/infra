@@ -16,8 +16,8 @@ This branch has my NAS setup and services. Target os is Ubuntu server 20.04.
 ### Installs on base os:
 - ansible
 - ZFS on linux
-- podman
-- podman-compose
+- docker
+- docker-compose
 - fail2ban
 - tailscale
 - python3 (and pip3)
