@@ -1,0 +1,50 @@
+# Install security hardening and auditing tools
+- hosts: localhost
+  vars:
+    
+  tasks:
+  - name: Install fail2ban
+    become: yes
+    ansible.builtin.apt:
+      name: fail2ban
+      state: present
+  - name: Install rkhunter
+    become: yes
+    ansible.builtin.apt:
+      name: rkhunter
+      state: present
+  - name: Install osquery (x86_64)
+    become: yes
+    ansible.builtin.apt:
+      deb: https://pkg.osquery.io/deb/osquery_5.5.1-1.linux_amd64.deb
+    when: ansible_architecture == "x86_64"
+  - name: Install osquery (arm64)
+    become: yes
+    ansible.builtin.apt:
+      deb: https://pkg.osquery.io/deb/osquery_5.5.1-1.linux_arm64.deb
+    when: ansible_architecture == "arm64"
+  - name: Install clamav
+    become: yes
+    ansible.builtin.apt:
+      name: clamav
+      state: present
+  - name: Install ufw
+    become: yes
+    ansible.builtin.apt:
+      name: ufw
+      state: present
+  - name: Install trivy repos
+    become: yes
+    command: ../../scripts/add_trivy_repos.sh
+  - name: Update apt
+    become: yes
+    command: sudo apt update
+  - name: Install trivy package
+    become: yes
+    ansible.builtin.apt:
+      name: trivy
+      state: present
+
+
+
+  
