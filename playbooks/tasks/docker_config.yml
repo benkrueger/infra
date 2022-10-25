@@ -1,0 +1,14 @@
+---
+- hosts: localhost
+  tasks:
+    - name: Write docker daemon config file
+      template:
+        src: ../../templates/configs/docker/daemon.json.j2
+        dest: /etc/docker/daemon.json
+    - name: Download ufw-docker script
+      become: yes
+      command: sudo wget -O /usr/local/bin/ufw-docker https://github.com/chaifeng/ufw-docker/raw/master/ufw-docker
+    - name: Set ufw-docker to be executable
+      become: yes
+      command: chmod +x /usr/local/bin/ufw-docker
+  
