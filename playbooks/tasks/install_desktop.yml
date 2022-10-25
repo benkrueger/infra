@@ -1,4 +1,4 @@
-# Install necessary dependencies to get NAS up and running.
+# Install necessary dependencies to get desktop up and running.
 - hosts: localhost
   vars:
     tailscale:
