@@ -1,0 +1,13 @@
+---
+version: "2.3"
+services:
+  searxng:
+    image: searxng/searxng
+    container_name: searxng
+    environment:
+      - PUID={{ admin_user_id }}
+      - PGID={{ fileaccess_gid }}
+      - BASE_URL=http://localhost:8080
+      - INSTANCE_NAME=nas-local-searx
+    ports:
+      - 8066:8080

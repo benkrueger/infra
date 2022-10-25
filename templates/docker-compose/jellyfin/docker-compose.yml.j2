@@ -1,0 +1,31 @@
+---
+version: "2.3"
+services:
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin
+    container_name: jellyfin
+    environment:
+      - PUID={{ admin_user_id }}
+      - PGID={{ fileaccess_gid }}
+      - TZ={{ timezone }}
+    volumes:
+      - jellyfin_config_vol:/config
+      - jellyfin_transcode_vol:/transcode
+      - /mainarray/media/tv:/data/tvshows
+      - /mainarray/media/movies:/data/movies
+      - /mainarray/media/music:/data/music
+      - /mainarray/media/musicvids:/data/musicvideos
+    devices:
+      - /dev/dri:/dev/dri
+    ports:
+      - 8096:8096
+      - 8920:8920 #optional
+      - 7359:7359/udp #optional
+      - 1900:1900/udp #optional
+    restart: unless-stopped
+volumes:
+    jellyfin_config_vol:
+    jellyfin_transcode_vol:
+      driver_opts:
+        type: tmpfs
+        device: tmpfs

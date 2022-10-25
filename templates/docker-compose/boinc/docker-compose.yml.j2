@@ -1,0 +1,22 @@
+---
+version: '2.3'
+services:
+  boinc:
+    image: lscr.io/linuxserver/boinc
+    container_name: boinc
+    mem_limit: 4096m
+    cpus: 2
+    environment:
+      - PUID={{ admin_user_id }}
+      - PGID={{ fileacess_gid }}
+      - TZ=Europe/London
+      - PASSWORD= #optional
+    volumes:
+      - boinc_config:/config
+    ports:
+      - 8003:8080
+    devices:
+      - /dev/dri:/dev/dri #optional
+    restart: unless-stopped
+volumes:
+  boinc_config:

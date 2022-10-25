@@ -1,0 +1,19 @@
+---
+version: "2.3"
+services:
+  radarr:
+    image: lscr.io/linuxserver/radarr
+    container_name: radarr
+    environment:
+      - PUID={{ admin_user_id }}
+      - PGID={{ fileaccess_gid }}
+      - TZ={{ timezone }}
+    volumes:
+      - radarr_config_volume:/config
+      - /mainarray/media/movies:/movies #optional
+      - /tank/mnemesync:/downloads #optional
+    ports:
+      - 7878:7878
+    restart: unless-stopped
+volumes:
+  radarr_config_volume

@@ -1,0 +1,21 @@
+---
+version "2.3"
+services:
+  airsonic-advanced:
+    image: lscr.io/linuxserver/airsonic-advanced
+    container_name: airsonic-advanced
+    environment:
+      - PUID={{ admin_user_id }}
+      - PGID={{} file_access_gid }}
+      - TZ={{ timezone}}
+      #- CONTEXT_PATH=<URL_BASE> #optional
+      #- JAVA_OPTS=<options> #optional
+    volumes:
+      - airsonic_config_vol:/config
+      - /mainarray/media/music:/music
+    ports:
+      - 4040:4040
+    devices:
+      - /dev/snd:/dev/snd #optional
+volumes:
+  airsonic_config_vol
