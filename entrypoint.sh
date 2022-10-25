@@ -9,4 +9,5 @@ install_deps () {
 main () {
     echo "Installing base dependencies."
     install_deps;
+    sudo ansible-playbook ./playbooks/tasks/main.yml;
 }

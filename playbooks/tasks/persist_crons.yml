@@ -1,0 +1,56 @@
+#Move backups, scans, updates and anything else to cron jobs.
+---
+- hosts: localhost
+    vars:
+    tasks:
+    - name: Run apt update weekly
+      become: yes
+      ansible.builtin.cron:
+        name: "Apt update"
+        minute: "0"
+        hour: "3"
+        weekday: "7"
+        user: root
+        job: "sudo apt update >/dev/null 2>&1"
+    - name: Run atp upgrage weekly
+      become: yes
+      ansible.builtin.cron:
+        name: "apt upgrade"
+        minute: "0"
+        hour: "4"
+        weekday: "7"
+        job: "sudo apt upgrade -y > /dev/null 2>&1"
+    - name: Clamscan home daily
+      become: yes
+      ansible.builtin.cron:
+        name: "/home clamscan"
+        minute: "0"
+        hour: "5"
+        user: root
+        job: "clamscan --recursive --move=/var/temp/infected --leave-temps=yes --log=/home/homscan.log /home"
+    - name: Clamscan root weekly.
+      become: yes
+      ansible.builtin.cron:
+        name: "/ clamscan"
+        minute: "0"
+        hour: "1"
+        day: "1"
+        user: root
+        job: "clamscan --recursive --move=/var/temp/infected --leave-temps=yes --log=/root/rootcan.log /"
+    - name: Update clamscanner
+      become: yes
+      ansible.builtin.cron:
+        name: "Update clamscanner"
+        minute: "15"
+        hour: "3"
+        user: root
+        job: "freshclam -d /dev/null 2>&1"
+    - name: Update rkhunter 
+      become: yes
+      ansible.builtin.cron:
+        name: "Update rkhunter"
+        minute: "10"
+        hour: "4"
+        day: "2,5"
+        user: root
+        "/usr/bin/rkhunter --cronjob --update --quiet"

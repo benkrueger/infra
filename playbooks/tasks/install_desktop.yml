@@ -3,7 +3,7 @@
   vars:
     tailscale:
     tailscale_login:
-    gvisor_key:
+    brave_deps: ['apt-transport-https', 'curl']
   tasks:
   - name: Install zfsutils
     become: yes
@@ -22,6 +22,21 @@
     command: sudo tailscale up
     register: tailscale_login
     when: tailscale is undefined
+  - name: Install git
+    become: yes
+    ansible.builtin.apt:
+      name: git
+      state: present
+  - name: Install openssh
+    become: yes
+    ansible.builtin.apt:
+      name: openssh
+      state:
+  - name: Install zsh
+    become: yes
+    ansible.builtin.apt:
+      name: git
+      state: present
   - name: Install docker
     become: yes
     ansible.builtin.apt:
@@ -44,14 +59,27 @@
     command: mv dist_linux/docker-slim-sensor /usr/local/bin
   - name: Remove docker-slim artifacts
     command: rm -rf ds.tar.gz dist_linux
-  - name: Check for gvisor pubkey.
-    stat: path=/usr/share/keyrings/gvisor-archive-keyring.gpg
-  - name: Install gVisor repo/keys.
+  - name: Install Brave browser repos
     become: yes
-    command: ../../scripts/gvisor_debian.sh
-    when: gvisor_key is undefined 
-  - name: Install gVisor package
+    command: ../../scripts/add_brave_repos.sh
+  - name: Install brave package.
     become: yes
     ansible.builtin.apt:
-      name: runsc
+      name: brave-browser
       state: present
+  - name: Install VScode.(x86_64)
+    become: yes
+    ansible.builtin.apt:
+      deb: https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
+    when: ansible_architecture == "x86_64"
+  - name: Install VScode (arm64)
+    become: yes
+    ansible.builtin.apt:
+      deb: https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-arm64
+    when: ansible_architecture == "arm64"
+  - name: Install sshfs
+    become: yes
+    ansible.builtin.apt:
+      name: sshfs
+      state: present
+  
