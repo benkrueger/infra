@@ -1,1 +1,11 @@
 # Create administrator and service dedicated users as well as access groups for shared files
+---
+- hosts: localhost
+  tasks:
+    - name: Create dedicated use for each service to map into docker.
+      become: yes
+      ansible.builtin.user:
+        name: "{{ item }}"
+        #Docker users will never log in, so they shouldn't need a shell
+        state: present
+      loop: "{{ services }}"
