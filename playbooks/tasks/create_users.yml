@@ -3,7 +3,7 @@
 - hosts: localhost
   vars:
     #Set this before run obv
-    admin_username: "deathclassic"
+    admin_username: ""
     default_dirs: ['src','nas','sbox']
   tasks:
     - name: Create admin user
