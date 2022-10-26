@@ -5,8 +5,8 @@ services:
     image: lscr.io/linuxserver/endlessh
     container_name: endlessh
     environment:
-      - PUID={{ admin_user_id }}
-      - PGID={{ fileacess_gid }}
+      - PUID={{ service_ids.ansible_facts.getent_passwd.endlessh.1 }}
+      - PGID={{ service_ids.ansible_facts.getent_passwd.endlessh.2 }}
       - TZ={{ timezone }}
       - MSDELAY=10000 #optional
       - MAXLINES=32 #optional

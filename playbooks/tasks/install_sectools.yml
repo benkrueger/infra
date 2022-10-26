@@ -28,6 +28,12 @@
     ansible.builtin.apt:
       name: clamav
       state: present
+  - name: Create clam temp infected file quarantine
+    become: yes
+    ansible.builtin.file:
+      path: /var/temp/infected
+      state: directory
+      owner: root
   - name: Install ufw
     become: yes
     ansible.builtin.apt:
