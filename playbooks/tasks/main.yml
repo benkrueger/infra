@@ -1,8 +1,7 @@
+#This playbook installs everything I need on regolith linux as a workstation desktop. 
 ---
 - hosts: localhost
-- import_playbook: install_deps.yml
-- import_playbook: zfs_arrays.yml
-- import_playbook: docker_config.yml
+- import_playbook: install_desktop.yml
 - import_playbook: create_users.yml
-- import_playbook: compose_templates.yml
-- import_playbook: start_services.yml
+- import_playbook: install_sectools.yml
+- import_playbook: persist_crons.yml

@@ -9,9 +9,9 @@ scripts/playbooks/etc will be centered around debian based linux distros.
 Each branch of this repo is a different host. To deploy to a host I switch to the relevant branch and run the code.
 The main branch is literally just this readme, maybe some shared code if that becomes possible.
 
-## NAS 
+## Laptop
 
-This branch has my NAS setup and services. Target os is Ubuntu server 20.04. 
+This branch has my laptop setup and services. Target os is Regolith LInux 1.6.0-focal. 
 
 ### Installs on base os:
 - ansible
@@ -21,36 +21,6 @@ This branch has my NAS setup and services. Target os is Ubuntu server 20.04.
 - fail2ban
 - tailscale
 - python3 (and pip3)
-
-### Configures following:
-- auto backups
-- auto import all zfs datasets connected to machine
-- tailscale
-- wg tunnels to cloudgw
-- admin user
-- groups and permissions for shared resources
-- maybe zfs dataset encryption
-- maybe fde
-
-### Installs containers to run following services:
-- samba
-- plex
-- emby
-- jellyfin
-- airsonic-advanced
-- hashtopolis
-- tinytinyrrs
-- boinc
-- radarr
-- lidarr 
-- sonarr
-- prowlarr
-- jacket
-- deluge
-- zoneminder
-- endlesssh
-- syncthing
-- cyberchef
-- searx
-- yacy
-- tdarr
+- Security tools and hardening I like
+- Cron jobs I use
+- Browsers, editors, and desktop env configs I like
