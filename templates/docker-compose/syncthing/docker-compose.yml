@@ -6,8 +6,8 @@ services:
     container_name: syncthing
     hostname: syncthing #optional
     environment:
-      - PUID={{ admin_user_id }}
-      - PGID={{ fileacess_gid }}
+      - PUID={{ service_ids.ansible_facts.getent_passwd.syncthing.1 }}
+      - PGID={{ service_ids.ansible_facts.getent_passwd.syncthing.2 }}
       - TZ={{ timezone }}
     volumes:
       - st_config:/config

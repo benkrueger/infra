@@ -22,10 +22,10 @@ services:
       #USER: "yourname;password"
 
       # set the UID for the samba share, default: ""
-      USERID: "{{ admin_user_id }}"
+      USERID: "{{ service_ids.ansible_facts.getent_passwd.samba.1 }}"
 
       # set the GID for the samba share, default: ""
-      GROUPID: "{{ fileaccess_gid }}"
+      GROUPID: "{{ service_ids.ansible_facts.getent_passwd.samba.2 }}"
 
       # add a single share. If you need more, use command instead of environment
       # required arg: "<name>;</path>"

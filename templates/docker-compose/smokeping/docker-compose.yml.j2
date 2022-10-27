@@ -1,0 +1,19 @@
+---
+version: "2.1"
+services:
+  smokeping:
+    image: lscr.io/linuxserver/smokeping:latest
+    container_name: smokeping
+    environment:
+      - PUID={{ ansible_facts.getent_passwd.smokeping.1 }}
+      - PGID={{ ansible_facts.getent_passwd.smokeping.2 }}
+      - TZ={{ timezone }}
+    volumes:
+      - smokeping_config:/config
+      - smokeping_data:/data
+    ports:
+      - 8083:80
+    restart: unless-stopped
+volumes:
+  smokeping_config:
+  smokeping_data:

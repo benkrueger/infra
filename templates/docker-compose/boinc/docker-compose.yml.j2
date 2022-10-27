@@ -7,8 +7,8 @@ services:
     mem_limit: 4096m
     cpus: 2
     environment:
-      - PUID={{ admin_user_id }}
-      - PGID={{ fileacess_gid }}
+      - PUID={{ service_ids.ansible_facts.getent_passwd.boinc.1 }}
+      - PGID={{ service_ids.ansible_facts.getent_passwd.boinc.2 }}
       - TZ=Europe/London
       - PASSWORD= #optional
     volumes:

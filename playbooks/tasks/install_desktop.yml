@@ -1,0 +1,95 @@
+# Install necessary dependencies to get desktop up and running.
+- hosts: localhost
+  vars:
+  tasks:
+  - name: Install zfsutils
+    become: yes
+    ansible.builtin.apt:
+      name: zfsutils
+      state: present
+  - name: Install git
+    become: yes
+    ansible.builtin.apt:
+      name: git
+      state: present
+  - name: Install zsh
+    become: yes
+    ansible.builtin.apt:
+      name: git
+      state: present
+  - name: Install docker
+    become: yes
+    ansible.builtin.apt:
+      name: docker
+      state: present
+    register: docker_install_result
+    ignore_errors: True
+  - name: Install docker-compose
+    become: yes
+    ansible.builtin.apt:
+      name: docker-compose
+      state: present
+    when: docker_install_result
+  - name: Download docker-slim tarball
+    command: curl -L -o ds.tar.gz https://downloads.dockerslim.com/releases/1.38.0/dist_linux.tar.gz
+    when: docker_install_result
+  - name: Extract docker-slim tarball
+    command: tar -xvf ds.tar.gz
+    when: docker_install_result
+  - name: Move docker-slim to /usr/local/bin
+    become: yes
+    command: mv dist_linux/docker-slim /usr/local/bin
+    when: docker_install_result
+  - name: Move docker-slim-sensor to /usr/local/bin
+    become: yes
+    command: mv dist_linux/docker-slim-sensor /usr/local/bin
+    when: docker_install_result
+  - name: Remove docker-slim artifacts
+    command: rm -rf ds.tar.gz dist_linux
+    when: docker_install_result
+  - name: Install Brave browser repos
+    become: yes
+    command: ../../scripts/add_brave_repos.sh
+    register: brave_repo_result
+  - name: Install brave package.
+    become: yes
+    ansible.builtin.apt:
+      name: brave-browser
+      state: present
+    when: brave_repo_result
+  - name: Install VScode.(x86_64)
+    become: yes
+    ansible.builtin.apt:
+      deb: https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-x64
+    when: ansible_architecture == "x86_64"
+  - name: Install VScode (arm64)
+    become: yes
+    ansible.builtin.apt:
+      deb: https://code.visualstudio.com/sha/download?build=stable&os=linux-deb-arm64
+    when: ansible_architecture == "arm64"
+  - name: Install sshfs
+    become: yes
+    ansible.builtin.apt:
+      name: sshfs
+      state: present
+    ignore_errors: True
+  - name: Install kitty
+    become: yes
+    ansible.builtin.apt:
+      name: kitty
+      state: present
+  - name: Install i3
+    become: yes
+    ansible.builtin.apt:
+      name: i3-wm
+      state: present
+  - name: Install pulseaudio
+    become: yes
+    ansible.builtin.apt:
+      name: pulseaudio
+      state: present
+  - name: Install pavucontrol
+    ansible.builtin.apt:
+      name: pavucontrol
+      state: present
+  

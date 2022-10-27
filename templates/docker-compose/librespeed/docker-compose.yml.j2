@@ -5,10 +5,9 @@ services:
         image: ghcr.io/linuxserver/librespeed
         container_name: librespeed
         environment:
-          - PUID={{ admin_user_id }}
-          - PGID={{ fileaccess_gid }}
+          - PUID={{ service_ids.ansible_facts.getent_passwd.librespeed.1 }}
+          - PGID={{ service_ids.ansible_facts.getent_passwd.librespeed.2 }}
           - TZ={{ timezone }}
-          - PASSWORD={{ librespeed_password.stdout }}
         volumes:
           - ./librespeed/config:/config
         ports:
