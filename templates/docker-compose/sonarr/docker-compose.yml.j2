@@ -14,5 +14,7 @@ services:
       - /tank/mnemesync:/downloads #optional
     ports:
       - 8989:8989
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
 volumes:
   sonarr_config

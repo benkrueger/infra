@@ -12,6 +12,8 @@ services:
       - prowlarr_config:/config
     ports:
       - 9696:9696
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     restart: unless-stopped
 volumes:
   prowlarr_config:

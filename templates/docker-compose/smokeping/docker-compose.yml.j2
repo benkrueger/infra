@@ -13,6 +13,8 @@ services:
       - smokeping_data:/data
     ports:
       - 8083:80
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     restart: unless-stopped
 volumes:
   smokeping_config:

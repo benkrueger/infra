@@ -11,3 +11,5 @@ services:
       - INSTANCE_NAME=local-searx
     ports:
       - 8066:8080
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"

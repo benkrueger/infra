@@ -1,0 +1,19 @@
+---
+version: "2.1"
+services:
+  pyload-ng:
+    image: lscr.io/linuxserver/pyload-ng:latest
+    container_name: pyload-ng
+    environment:
+      - PUID={{ service_ids.ansible_facts.getent_passwd.pyload-ng.1 }}
+      - PGID={{ service_ids.ansible_facts.getent_passwd.pyload-ng.2 }}
+      - TZ={{ timezone }}
+    volumes:
+      - /path/to/appdata/config:/config
+      - {{ pyload_downloads }}:/downloads
+    ports:
+      - 8000:8000
+      - 9666:9666 #optional
+    restart: unless-stopped
+volumes:
+  pyload_config:

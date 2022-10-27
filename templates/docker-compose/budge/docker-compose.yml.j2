@@ -1,0 +1,18 @@
+---
+version: "2.1"
+services:
+  budge:
+    image: lscr.io/linuxserver/budge:latest
+    container_name: budge
+    environment:
+      - PUID={{ service_ids.ansible_facts.getent_passwd.budge.1 }}
+      - PGID={{ service_ids.ansible_facts.getent_passwd.budge.2 }}
+      - TZ={{ timezone }}
+    volumes:
+      - budge_config:/config
+    ports:
+      - 80:80
+      - 443:443
+    restart: unless-stopped
+volumes:
+  budge_config:

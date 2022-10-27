@@ -9,12 +9,14 @@ services:
     environment:
       - PUID={{ service_ids.ansible_facts.getent_passwd.boinc.1 }}
       - PGID={{ service_ids.ansible_facts.getent_passwd.boinc.2 }}
-      - TZ=Europe/London
-      - PASSWORD= #optional
+      - TZ={{ timezone }}
+      #- PASSWORD= #optional
     volumes:
       - boinc_config:/config
     ports:
       - 8003:8080
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     devices:
       - /dev/dri:/dev/dri #optional
     restart: unless-stopped
