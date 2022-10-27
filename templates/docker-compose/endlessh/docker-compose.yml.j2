@@ -17,7 +17,7 @@ services:
       - endlessh_config:/config #optional
     ports:
       - 22:2222
-    runtime: "runsc"
+    #runtime: "runsc"
     restart: unless-stopped
 volumes:
   endlessh_config:
