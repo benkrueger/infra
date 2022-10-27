@@ -1,0 +1,20 @@
+# Fire up the docker-compose services!
+---
+- hosts: localhost
+  vars:
+    services: ['boinc','smokeping','cyberchef','searxng','foldingathome','cadvisor']
+  tasks:
+    - name: Docker-compose kill the services!
+      command: docker-compose down --rmi all -v --remove-orphans
+      become: yes
+      become_user: "{{ item }}" 
+      loop: "{{ services }}"
+    - name: Prune system
+      become: yes
+      command: docker system prune
+    - name: Prune volumes
+      become: yes
+      command: docker volumes prune
+    - name: Prune networks
+      become: yes
+      command: docker network prune

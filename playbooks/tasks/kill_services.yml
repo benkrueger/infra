@@ -1,0 +1,11 @@
+# Fire up the docker-compose services!
+---
+- hosts: localhost
+  vars:
+    services: ['boinc','smokeping','cyberchef','searxng','foldingathome','cadvisor']
+  tasks:
+    - name: Docker-compose kill the services!
+      command: docker-compose kill
+      become: yes
+      become_user: "{{ item }}" 
+      loop: "{{ services }}"
