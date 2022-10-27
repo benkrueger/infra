@@ -1,8 +1,8 @@
 ---
 - hosts: localhost
   vars:
-    services: ['endlessh','librespeed','boinc','smokeping','ttrss','cyberchef','searxng']
-    test: True
+    services: ['endlessh','boinc','smokeping','cyberchef','searxng','foldingathome','cadvisor']
+    test: False
     service_ids:
     timezone: 'America/Chicago'
   tasks:
@@ -10,6 +10,8 @@
       become: yes
       ansible.builtin.user:
         name: "{{ item }}"
+        groups: "docker"
+        append: yes
       loop: "{{ services }}"
     - name: Get service uid/gid
       become: yes
@@ -21,13 +23,8 @@
         src: ../../templates/docker-compose/{{ item }}/docker-compose.yml.j2
         dest: "/home/{{ item }}/docker-compose.yml"
       loop: "{{ services }}"
-      
-    - name: Start docker-compose for each user
-      become: yes
-      sudo_user: "{{ item }}"
-      command: "ls ~"
-      loop: "{{ services }}"
     ## Testing/Removal tasks
+
     - name: Remove service users
       become: yes
       ansible.builtin.user:
