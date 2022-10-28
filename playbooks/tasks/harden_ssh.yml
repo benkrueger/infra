@@ -49,6 +49,8 @@
       ansible.builtin.service:
         name: sshd
         state: restarted
-
-
-      
+    - name: Install sshaudit
+      become: yes
+      ansible.builtin.pip:
+        name: ssh-audit
+        state: present
