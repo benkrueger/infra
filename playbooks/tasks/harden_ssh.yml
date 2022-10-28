@@ -1,0 +1,54 @@
+# harden ssh service
+---
+- hosts: localhost
+  vars:
+    ssh_port: 2222
+  tasks:
+    - name: Rm old keys
+      become: yes
+      ansible.builtin.file:
+        name: "{{ item }}"
+        state: absent
+      with_fileglob:
+      - "/etc/ssh/ssh_host_*"
+    - name: Install ansible community.crypto module
+      become: yes
+      command: ansible-galaxy collection install community.crypto
+    - name: Generate new ssh_host_rsa_key
+      become: yes
+      community.crypto.openssh_keypair:
+        path: /etc/ssh/ssh_host_rsa_key
+        size: 4096
+        type: rsa
+        force: True
+    - name: Generate new ssh_host_ed25519_key
+      become: yes
+      community.crypto.openssh_keypair:
+        path: /etc/ssh/ssh_host_ed25519_key
+        type: ed25519
+    - name: Enable host RSA key
+      become: yes
+      ansible.builtin.replace:
+        path: /etc/ssh/sshd_config
+        regexp: "#HostKey /etc/ssh_host_rsa_key"
+        replace: "HostKey /etc/ssh_host_rsa_key"
+    - name: Enable host ed25519 key
+      become: yes
+      ansible.builtin.replace:
+        path: /etc/ssh/sshd_config
+        regexp: "#HostKey /etc/ssh_host_ed25519_key"
+        replace: "HostKey /etc/ssh_host_ed25519_key"
+    - name: Change ssh listen port to something other than 22
+      become: yes
+      ansible.builtin.replace:
+        path: /etc/ssh/sshd_config
+        regexp: "#Port 22"
+        replace: "Port {{ ssh_port }}"
+    - name: Restart ssh service
+      become: yes
+      ansible.builtin.service:
+        name: sshd
+        state: restarted
+
+
+      
