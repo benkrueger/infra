@@ -3,9 +3,15 @@
 - hosts: localhost
   vars:
     #Set this before run obv
-    admin_username: ""
-    default_dirs: ['src','nas','sbox']
+    admin_username: "deathclassic"
+    default_dirs: ['src','sbox']
   tasks:
+    - name: Create fileaccess group
+      become: yes
+      ansible.builtin.group:
+        name: fileaccess
+        state: present
+        gid: 1001
     - name: Create admin user
       become: yes
       ansible.builtin.user:
@@ -14,7 +20,7 @@
         generate_ssh_key: yes
         ssh_key_bits: 4096
         ssh_key_file: "/home/{{ admin_username }}/.ssh/id_rsa"
-        groups: "sudo"
+        groups: sudo,docker,fileaccess
       when: admin_username is not undefined
     - name: Create default dirs in home
       become: yes
