@@ -1,0 +1,21 @@
+---
+version: "2.1"
+services:
+  jackett:
+    image: lscr.io/linuxserver/jackett:latest
+    container_name: jackett
+    environment:
+      - PUID={{ service_ids.ansible_facts.getent_passwd.jackett.1 }}
+      - PGID={{ service_ids.ansible_facts.getent_passwd.jackett.2 }}
+      - TZ={{ timezone }}
+      - AUTO_UPDATE=true #optional
+    volumes:
+      - jackett_config:/config
+      - {{ torrent_blackhole }}:/downloads
+    ports:
+      - 9117:9117
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    restart: unless-stopped
+volumes:
+  jackett_config:

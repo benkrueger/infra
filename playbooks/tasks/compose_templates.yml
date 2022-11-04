@@ -1,7 +1,7 @@
 ---
 - hosts: localhost
   vars:
-    services: ['endlessh','boinc','smokeping','cyberchef','searxng','foldingathome','cadvisor']
+    services: ['endlessh','boinc','smokeping','cyberchef','searxng','foldingathome','cadvisor','syncthing']
     test: False
     service_ids:
     timezone: 'America/Chicago'

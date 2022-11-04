@@ -29,6 +29,8 @@ services:
       - /dev/sdi:/dev/sdi
       - /dev/sdj:/dev/sdj
       - /dev/sdk:/dev/sdk
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     restart: unless-stopped
 volumes:
   scrutiny_config_vol:

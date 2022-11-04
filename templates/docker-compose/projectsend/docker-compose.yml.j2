@@ -1,0 +1,19 @@
+---
+version: "2.1"
+services:
+  projectsend:
+    image: lscr.io/linuxserver/projectsend:latest
+    container_name: projectsend
+    environment:
+      - PUID={{ service_ids.ansible_facts.getent_passwd.projectsend.1 }}
+      - PGID={{ service_ids.ansible_facts.getent_passwd.projectsend.2 }}
+      - TZ={{ timezone }}
+      - MAX_UPLOAD=5000
+    volumes:
+      - projsend_config:/config
+      -{{ projsend_data }}:/data
+    ports:
+      - 80:80
+    restart: unless-stopped
+volumes:
+  projsend_config:

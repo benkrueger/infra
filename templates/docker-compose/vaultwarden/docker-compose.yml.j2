@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  vaultwarden:
+    image: vaultwarden/server:latest
+    container_name: vaultwarden
+    restart: always
+    environment:
+      - PUID={{ service_ids.ansible_facts.getent_passwd.vaultwarden.1 }}
+      - PGID={{ service_ids.ansible_facts.getent_passwd.vaultwarden.2 }}
+      - TZ={{ timezone }}
+      - WEBSOCKET_ENABLED= "true"  # Enable WebSocket notifications.
+    volumes:
+      - vw_data:/data:z
+  fail2ban:
+    container_name: fail2ban
+    restart: always
+    image: crazymax/fail2ban:latest
+    environment: 
+      - TZ={{ timezone }}
+      - F2B_DB_PURGE_AGE=30d
+      - F2B_LOG_TARGET=/data/fail2ban.log
+      - F2B_LOG_LEVEL=INFO
+      - F2B_IPTABLES_CHAIN=INPUT
+    volumes:
+      - fail2ban_data:/data
+      - vw_data:/vaultwarden:ro
+    network_mode: "host"
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+  caddy:
+    image: caddy:2
+    container_name: caddy
+    restart: always
+    ports:
+      - 80:80  # Needed for the ACME HTTP-01 challenge.
+      - 443:443
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_config:/config
+      - caddy_data:/data
+    environment:
+      DOMAIN: "https://{{ vw_domain }}"  # Your domain.
+      EMAIL: {{ vw_email }}                 # The email address to use for ACME registration.
+      LOG_FILE: "/data/access.log"
+  volumes:
+    vw_data:
+    caddy_data:
+    fail2ban_data:

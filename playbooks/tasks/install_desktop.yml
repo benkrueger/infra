@@ -89,7 +89,13 @@
       name: pulseaudio
       state: present
   - name: Install pavucontrol
+    become: yes
     ansible.builtin.apt:
       name: pavucontrol
       state: present
-  
+  - name: Install hugo
+    become: yes
+    ansible.builtin.apt:
+      name: hugo
+      state: present
+      

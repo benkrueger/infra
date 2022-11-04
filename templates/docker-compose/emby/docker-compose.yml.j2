@@ -1,0 +1,31 @@
+---
+version: "2.3"
+services:
+  emby:
+    image: lscr.io/linuxserver/emby:latest
+    container_name: emby
+    environment:
+      - PUID={{ service_ids.ansible_facts.getent_passwd.emby.1 }}
+      - PGID={{ service_ids.ansible_facts.getent_passwd.emby.2 }}
+      - TZ={{ timezone }}
+    volumes:
+      - emby_config:/config
+      - /mainarray/media/tv:/data/tvshows
+      - /mainarray/media/movies:/data/movies
+      - /mainarray/media/music:/data/music
+      - /mainarray/media/musicvids:/data/musicvideos
+      - emby_transcode:/transcode
+    ports:
+      - 8097:8096
+      - 8920:8920 #optional
+    devices:
+      - /dev/dri:/dev/dri #optional
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    restart: unless-stopped
+volumes:
+  emby_config:
+  emby_transcode:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs

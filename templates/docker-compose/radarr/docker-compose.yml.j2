@@ -14,6 +14,8 @@ services:
       - /tank/mnemesync:/downloads #optional
     ports:
       - 7878:7878
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     restart: unless-stopped
 volumes:
   radarr_config_volume:
