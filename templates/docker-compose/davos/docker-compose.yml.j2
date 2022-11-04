@@ -11,7 +11,7 @@ services:
       - davos_config:/config
       - {{ davos_download }}:/download
     ports:
-      - 8080:8080
+      - 8086:8080
     restart: unless-stopped
 volumes:
   davos_config

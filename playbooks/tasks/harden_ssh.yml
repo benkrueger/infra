@@ -54,3 +54,6 @@
       ansible.builtin.pip:
         name: ssh-audit
         state: present
+    - name: UFW allow on new ssh port
+      become: yes
+      command: "ufw allow {{ ssh_port }}"

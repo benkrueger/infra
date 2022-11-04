@@ -39,6 +39,9 @@
     ansible.builtin.apt:
       name: ufw
       state: present
+  - name: Enable ufw
+    become: yes
+    command: ufw enable
   - name: Install trivy repos
     become: yes
     command: ../../scripts/add_trivy_repos.sh
