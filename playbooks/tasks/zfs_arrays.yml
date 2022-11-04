@@ -1,4 +1,5 @@
 # Configure zfs storage arrays.
+# I don't actually use this, makes me way too nervous and it's not that hard to run 2 commands once.
 ---
 - hosts: localhost
   vars:

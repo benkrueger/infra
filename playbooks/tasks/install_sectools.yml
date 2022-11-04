@@ -50,7 +50,12 @@
     ansible.builtin.apt:
       name: trivy
       state: present
-
+  - name: Get docker-ufw
+    become: yes
+    command: ../../scripts/get_docker_ufw.sh
+  - name: Install docker-ufw
+    become: yes
+    command: /usr/local/bin/ufw-docker install
 
 
   
