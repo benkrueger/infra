@@ -1,0 +1,20 @@
+---
+version: "2.1"
+services:
+  lazylibrarian:
+    image: lscr.io/linuxserver/lazylibrarian:latest
+    container_name: lazylibrarian
+    environment:
+      - TZ={{ timezone }}
+      - PUID={{ service_ids.ansible_facts.getent_passwd.lazylibrarian.1 }}
+      - PGID={{ service_ids.ansible_facts.getent_passwd.lazylibrarian.2 }}
+      - DOCKER_MODS=linuxserver/calibre-web:calibre|linuxserver/mods:lazylibrarian-ffmpeg #optional
+    volumes:
+      - /path/to/data:/config
+      - /path/to/downloads/:/downloads
+      - /path/to/data/:/books #optional
+    ports:
+      - 5299:5299
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    restart: unless-stopped

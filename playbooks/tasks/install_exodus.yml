@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  vars:
+    exodus_path: ~/.local/bin/
+  tasks:
+  - name: Install exodus pip package
+    ansible.builtin.pip:
+      name: exodus-bundler
+      state: present
+  - name: Add exodus to path variable
+    copy:
+      dest: /etc/profile.d/custom-path.sh
+      content: 'PATH=$PATH:{{ exodus_path }}'

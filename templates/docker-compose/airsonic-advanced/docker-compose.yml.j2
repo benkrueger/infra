@@ -5,8 +5,8 @@ services:
     image: lscr.io/linuxserver/airsonic-advanced
     container_name: airsonic-advanced
     environment:
-      - PUID={{ admin_user_id }}
-      - PGID={{} file_access_gid }}
+      - PUID={{ service_ids.ansible_facts.getent_passwd.airsonic-advanced.1 }}
+      - PGID={{ service_ids.ansible_facts.getent_passwd.airsonic-advanced.2 }}
       - TZ={{ timezone}}
       #- CONTEXT_PATH=<URL_BASE> #optional
       #- JAVA_OPTS=<options> #optional
@@ -15,6 +15,8 @@ services:
       - /mainarray/media/music:/music
     ports:
       - 4040:4040
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     devices:
       - /dev/snd:/dev/snd #optional
 volumes:

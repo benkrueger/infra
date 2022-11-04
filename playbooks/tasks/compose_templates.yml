@@ -1,22 +1,42 @@
 ---
 - hosts: localhost
-  
   vars:
-    services: ['cadvisor','librespeed','watchtower','scrutiny','jellyfin','samba']
+    services: ['endlessh','boinc','smokeping','cyberchef','searxng','foldingathome','cadvisor','syncthing']
+    test: False
+    service_ids:
     timezone: 'America/Chicago'
-    compose_root: ./
-    admin_user_id: "1000"
-    fileaccess_gid: "1001"
-    librespeed_password: 
   tasks:
-    - name: Generate password for librespeed 
-      command: openssl rand -hex 16
-      register: librespeed_password
-    - name: Create services directory and subdirs.
-      command: "mkdir -p {{ compose_root}}services/{{ item }}"
+    - name: Create service users
+      become: yes
+      ansible.builtin.user:
+        name: "{{ item }}"
+        groups: "docker"
+        append: yes
       loop: "{{ services }}"
+    - name: Get service uid/gid
+      become: yes
+      ansible.builtin.getent:
+        database: passwd
+      register: service_ids
     - name: Write docker-compose templates
       template:
-        src: ../templates/docker-compose/{{ item }}/docker-compose.yml.j2
-        dest: "{{ compose_root }}services/{{ item }}/docker-compose.yml"
+        src: ../../templates/docker-compose/{{ item }}/docker-compose.yml.j2
+        dest: "/home/{{ item }}/docker-compose.yml"
       loop: "{{ services }}"
+    ## Testing/Removal tasks
+
+    - name: Remove service users
+      become: yes
+      ansible.builtin.user:
+        name: "{{ item }}"
+        state: absent
+      loop: "{{ services }}"
+      when: test
+    - name: Remove service directories
+      become: yes
+      ansible.builtin.file:
+        name: "/home/{{ item }}"
+        state: absent
+      loop: "{{ services }}"
+      when: test
+    

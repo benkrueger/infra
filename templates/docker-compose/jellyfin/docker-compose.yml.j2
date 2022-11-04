@@ -5,8 +5,8 @@ services:
     image: lscr.io/linuxserver/jellyfin
     container_name: jellyfin
     environment:
-      - PUID={{ admin_user_id }}
-      - PGID={{ fileaccess_gid }}
+      - PUID={{ service_ids.ansible_facts.getent_passwd.jellyfin.1 }}
+      - PGID={{ service_ids.ansible_facts.getent_passwd.jellyfin.2 }}
       - TZ={{ timezone }}
     volumes:
       - jellyfin_config_vol:/config
@@ -22,6 +22,8 @@ services:
       - 8920:8920 #optional
       - 7359:7359/udp #optional
       - 1900:1900/udp #optional
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     restart: unless-stopped
 volumes:
     jellyfin_config_vol:

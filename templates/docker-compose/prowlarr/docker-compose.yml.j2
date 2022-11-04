@@ -5,13 +5,15 @@ services:
     image: lscr.io/linuxserver/prowlarr:develop
     container_name: prowlarr
     environment:
-      - PUID={{ admin_user_id }}
-      - PGID={{ fileacess_gid }}
+      - PUID={{ service_ids.ansible_facts.getent_passwd.prowlarr.1 }}
+      - PGID={{ service_ids.ansible_facts.getent_passwd.prowlarr.2 }}
       - TZ={{ timezone }}
     volumes:
       - prowlarr_config:/config
     ports:
       - 9696:9696
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     restart: unless-stopped
 volumes:
   prowlarr_config:

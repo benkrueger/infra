@@ -7,8 +7,8 @@ services:
     cap_add:
       - SYS_RAWIO
     environment:
-      - PUID={ admin_user_id }
-      - PGID={ file_access_gid }
+      - PUID={ service_ids.ansible_facts.getent_passwd.scrutiny.1 }
+      - PGID={ service_ids.ansible_facts.getent_passwd.scrutiny.2 }
       - TZ={ timezone }
       - SCRUTINY_API_ENDPOINT=http://localhost:8080
       - SCRUTINY_WEB=true
@@ -29,6 +29,8 @@ services:
       - /dev/sdi:/dev/sdi
       - /dev/sdj:/dev/sdj
       - /dev/sdk:/dev/sdk
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     restart: unless-stopped
 volumes:
   scrutiny_config_vol:

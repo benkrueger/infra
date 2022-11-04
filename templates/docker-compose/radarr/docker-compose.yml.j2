@@ -5,8 +5,8 @@ services:
     image: lscr.io/linuxserver/radarr
     container_name: radarr
     environment:
-      - PUID={{ admin_user_id }}
-      - PGID={{ fileaccess_gid }}
+      - PUID={{ service_ids.ansible_facts.getent_passwd.radarr.1 }}
+      - PGID={{ service_ids.ansible_facts.getent_passwd.radarr.2 }}
       - TZ={{ timezone }}
     volumes:
       - radarr_config_volume:/config
@@ -14,6 +14,8 @@ services:
       - /tank/mnemesync:/downloads #optional
     ports:
       - 7878:7878
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     restart: unless-stopped
 volumes:
-  radarr_config_volume
+  radarr_config_volume:

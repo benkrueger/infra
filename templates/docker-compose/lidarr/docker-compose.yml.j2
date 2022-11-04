@@ -5,8 +5,8 @@ services:
     image: lscr.io/linuxserver/lidarr
     container_name: lidarr
     environment:
-      - PUID={{ admin_user_id }}
-      - PGID={{ fileaccess_gid }}
+      - PUID={{ service_ids.ansible_facts.getent_passwd.lidarr.1 }}
+      - PGID={{ service_ids.ansible_facts.getent_passwd.lidarr.2 }}
       - TZ={{ timezone }}
     volumes:
       - lidarr_config_vol:/config
@@ -14,6 +14,8 @@ services:
       - /tank/mnemesync:/downloads #optional
     ports:
       - 8686:8686
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     restart: unless-stopped
 volumes:
   lidarr_config_vol:
