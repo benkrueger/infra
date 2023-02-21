@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  vars:
+    services: ['endlessh','boinc','smokeping','cyberchef','searxng','foldingathome','cadvisor','syncthing','diskover','emby','davos','jackett','jellyfin','lidarr','radarr','sonarr','plex','samba','prowlarr','scrutiny','watchtower','ttrss','zoneminder']
+    service_ids:
+    timezone: 'America/Chicago'
+    admin_username: ""
+  tasks:
+    name: "Find external port mapping in compose files"
+    ansible.builtin.lineinfile:
+      path: "/home/{{ admin_username}}/{{ item }}"
+      regexp: "\n\s+(\d+):\d+"
+    loop: "services"
