@@ -8,5 +8,5 @@
     - name: Docker-compose up the services!
       command: docker-compose /home/{{ admin_username }}/{{ item }} up -d
       become: yes
-      become_user: "{{ item }}" 
+      become_user: "{{ admin_username }}" 
       loop: "{{ services }}"
