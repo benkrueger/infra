@@ -5,12 +5,19 @@
     test: False
     service_ids:
     timezone: 'America/Chicago'
+    admin_username: ""
   tasks:
-    - name: Create service users
-      become: yes
+    - name: Create service directories
+      ansible.builtin.file:
+        path:"/home/{{ admin_username }}/{{ item }}"
+        owner: "{{ admin_username }}"
+        group: "{{ admin_username }}"
+        state: directory
+      loop: "{{ services }}"
+    - name: Get service uid/gid
       ansible.builtin.user:
         name: "{{ item }}"
-        groups: "docker"
+        groups: "docker,fileaccess"
         append: yes
       loop: "{{ services }}"
     - name: Get service uid/gid
@@ -21,22 +28,5 @@
     - name: Write docker-compose templates
       template:
         src: ../../templates/docker-compose/{{ item }}/docker-compose.yml.j2
-        dest: "/home/{{ item }}/docker-compose.yml"
+        dest: "/home{{ admin_username }}/{{ item }}/docker-compose.yml"
       loop: "{{ services }}"
-    ## Testing/Removal tasks
-
-    - name: Remove service users
-      become: yes
-      ansible.builtin.user:
-        name: "{{ item }}"
-        state: absent
-      loop: "{{ services }}"
-      when: test
-    - name: Remove service directories
-      become: yes
-      ansible.builtin.file:
-        name: "/home/{{ item }}"
-        state: absent
-      loop: "{{ services }}"
-      when: test
-    

@@ -1,27 +1,33 @@
 #Playbook to install reverse proxy, vpn and gateway services on a cloud vps.
 ---
-- hosts: all
+- hosts: gateway
   become: yes
   tasks:
+    - name: Install parted
+      become: yes
+      ansible.builtin.apt:
+        name: parted
+        state: present
     - name: Create new partition
       parted:
-        device: /dev/sda
+        device: /dev/vda
         number: 1
         state: present
         flags: lvm
     - name: Format the partition
       filesystem:
         fstype: ext4
-        dev: /dev/sda1
+        dev: /dev/vda1
     - name: Mount the partition
       mount:
         path: /
-        src: /dev/sda1
+        src: /dev/vda1
         fstype: ext4
+        state: present
     - name: Resize the partition
       parted:
-        device: /dev/sda
+        device: /dev/vda
         number: 1
-        state: resizepart
-        resizefs: yes
-        end: 100%
+        resize: true
+        part_end: 100%
+        state: present
