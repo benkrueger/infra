@@ -18,7 +18,7 @@
       loop: "{{ services }}"
     - name: Get service uid/gid
       ansible.builtin.user:
-        name: "{{ item }}"
+        name: "{{ admin_username }}"
         groups: "docker,fileaccess"
         append: yes
       loop: "{{ services }}"

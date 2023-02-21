@@ -1,4 +1,4 @@
-# Kill the docker-compose services!
+# Clean up docker-compose service volumes, images and networks
 ---
 - hosts: localhost
   vars:
@@ -8,6 +8,13 @@
     tasks:
     - name: Docker-compose kill the services!
       command: docker-compose kill
+      become: yes
+      become_user: "{{ admin_username }}" 
+      args:
+        chdir: "/home/{{ admin_username }}/{{ item }} "
+      loop: "{{ services }}"
+    - name: Docker-compose rm
+      command: docker-compose rm -f
       become: yes
       become_user: "{{ admin_username }}" 
       args:
