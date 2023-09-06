@@ -1,0 +1,45 @@
+---
+- hosts: localhost
+  vars:
+    tailscale:
+    tailscale_login:
+    gvisor_key:
+  tasks:
+  - name: Install zfsutils
+    become: yes
+    ansible.builtin.apt:
+      name: zfsutils
+      state: present
+  - name: Install docker
+    become: yes
+    ansible.builtin.apt:
+      name: docker
+      state: present
+  - name: Install docker-compose
+    become: yes
+    ansible.builtin.apt:
+      name: docker-compose
+      state: present
+  - name: Download docker-slim tarball
+    command: curl -L -o ds.tar.gz https://downloads.dockerslim.com/releases/1.38.0/dist_linux.tar.gz
+  - name: Extract docker-slim tarball
+    command: tar -xvf ds.tar.gz
+  - name: Move docker-slim to /usr/local/bin
+    become: yes
+    command: mv dist_linux/docker-slim /usr/local/bin
+  - name: Move docker-slim-sensor to /usr/local/bin
+    become: yes
+    command: mv dist_linux/docker-slim-sensor /usr/local/bin
+  - name: Remove docker-slim artifacts
+    command: rm -rf ds.tar.gz dist_linux
+  - name: Check for gvisor pubkey.
+    stat: path=/usr/share/keyrings/gvisor-archive-keyring.gpg
+  - name: Install gVisor repo/keys.
+    become: yes
+    command: ../../scripts/gvisor_debian.sh
+    when: gvisor_key is undefined 
+  - name: Install gVisor package
+    become: yes
+    ansible.builtin.apt:
+      name: runsc
+      state: present
