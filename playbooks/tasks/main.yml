@@ -1,5 +1,4 @@
-#This playbook installs everything I need on regolith linux as a workstation desktop. 
----
+#This playbook installs everything I need on my Network Attached Storage.
 - hosts: localhost
 - import_playbook: install_nas.yml
 - import_playbook: create_users.yml
