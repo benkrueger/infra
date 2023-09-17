@@ -2,11 +2,11 @@
 version: "2.1"
 services:
   changedetection:
-    image: lscr.io/linuxserver/changedetection.io:latest
+    image: localhost:5000/changedetection:latest
     container_name: changedetection
     environment:
-      - PUID={{ service_ids.ansible_facts.getent_passwd.changedetection.1 }}
-      - PGID={{ service_ids.ansible_facts.getent_passwd.changedetection.2 }}
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
       - TZ={{ timezone}}
     volumes:
       - changedetection_config:/config

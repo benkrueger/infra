@@ -1,0 +1,36 @@
+---
+- name: Setup a local docker container registry
+  docker_container:
+    name: registry
+    image: registry:2
+    ports:
+      - "5000:5000"
+- name: Read services from services.yml
+  include_vars:
+    file: services.yml
+    name: services
+- name: Pull and check in docker images to local registry
+  command: >
+    docker pull lscr.io/linuxserver/{{ item }} &&
+    docker tag lscr.io/linuxserver/{{ item }} localhost:5000/{{ item }} &&
+    docker push localhost:5000/{{ item }}
+  loop: "{{ services }}"
+
+- name: Slim down docker images
+  command: >
+    docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock dslim/slim build localhost:5000/{{ item }}
+  loop: "{{ services }}"
+
+- name: Test slimmed docker images
+  command: >
+    docker run --rm localhost:5000/{{ item }} /bin/true
+  register: result
+  loop: "{{ services }}"
+
+- name: Check in slimmed docker images if they work
+  command: >
+    docker tag localhost:5000/{{ item }} localhost:5000/{{ item }}_slim &&
+    docker push localhost:5000/{{ item }}_slim
+  when: result.rc == 0
+  loop: "{{ services }}"
+

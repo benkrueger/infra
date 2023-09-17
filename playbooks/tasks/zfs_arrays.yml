@@ -1,9 +1,33 @@
-# Configure zfs storage arrays.
-# I don't actually use this, makes me way too nervous and it's not that hard to run 2 commands once.
 ---
 - hosts: localhost
   vars:
-    tank:
-    mainarray:
+    tank: tank
+    mainarray: mainarray
   tasks:
-    - name: 
+    - name: Check if zfs is installed
+      command: zfs --version
+      register: zfs_installed
+      failed_when: "'command not found' in zfs_installed.stderr"
+    - name: Import zfs arrays
+      command: zpool import {{ item }}
+      with_items:
+        - "{{ tank }}"
+        - "{{ mainarray }}"
+    - name: Check if docker is installed
+      command: docker --version
+      register: docker_installed
+      ignore_errors: yes
+    - name: Configure docker to use zfs
+      block:
+        - name: Update docker-daemon.json
+          copy:
+            dest: /etc/docker/daemon.json
+            content: |
+              {
+                "storage-driver": "zfs"
+              }
+        - name: Create zfs dataset for docker volumes
+          command: zfs create {{ tank }}/docker-volumes
+        - name: Configure docker to use zfs dataset
+          command: docker volume create -d local -o type=zfs -o device={{ tank }}/docker-volumes docker-volumes
+      when: docker_installed.rc == 0

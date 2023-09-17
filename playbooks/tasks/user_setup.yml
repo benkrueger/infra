@@ -1,0 +1,20 @@
+- name: Read services.yml
+  include_vars:
+    file: services.yml
+    name: services
+- name: Create fileaccess group
+  group:
+    name: fileaccess
+    state: present
+- name: Create users from services list and add to fileaccess group if fileaccess is true
+  user:
+    name: "{{ item.name }}"
+    state: present
+    groups: "{{ 'fileaccess' if item.fileaccess else '' }}"
+  loop: "{{ services }}"
+- name: Add users to docker group
+  user:
+    name: "{{ item.name }}"
+    groups: docker
+    append: yes
+  loop: "{{ services }}"

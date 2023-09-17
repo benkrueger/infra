@@ -2,11 +2,11 @@
 version: "2.3"
 services:
   radarr:
-    image: lscr.io/linuxserver/radarr
+    image: localhost:5000/radarr
     container_name: radarr
     environment:
-      - PUID={{ service_ids.ansible_facts.getent_passwd.radarr.1 }}
-      - PGID={{ service_ids.ansible_facts.getent_passwd.radarr.2 }}
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
       - TZ={{ timezone }}
     volumes:
       - radarr_config_volume:/config

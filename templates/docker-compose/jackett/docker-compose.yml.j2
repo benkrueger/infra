@@ -2,11 +2,11 @@
 version: "2.3"
 services:
   jackett:
-    image: lscr.io/linuxserver/jackett:latest
+    image: localhost:5000/jackett:latest
     container_name: jackett
     environment:
-      - PUID={{ service_ids.ansible_facts.getent_passwd.jackett.1 }}
-      - PGID={{ service_ids.ansible_facts.getent_passwd.jackett.2 }}
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
       - TZ={{ timezone }}
       - AUTO_UPDATE=true #optional
     volumes:

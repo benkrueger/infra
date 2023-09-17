@@ -2,11 +2,11 @@
 version: "2.1"
 services:
   ombi:
-    image: lscr.io/linuxserver/ombi:latest
+    image: localhost:5000/ombi
     container_name: ombi
     environment:
-      - PUID={{ service_ids.ansible_facts.getent_passwd.ombi.1 }}
-      - PGID={{ service_ids.ansible_facts.getent_passwd.ombi.2 }}
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
       - TZ={{ timezone }}
       - BASE_URL={{ ombi_url }} #optional
     volumes:

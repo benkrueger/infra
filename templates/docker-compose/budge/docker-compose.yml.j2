@@ -2,11 +2,11 @@
 version: "2.1"
 services:
   budge:
-    image: lscr.io/linuxserver/budge:latest
+    image: localhost:5000/linuxserver/budge:latest
     container_name: budge
     environment:
-      - PUID={{ service_ids.ansible_facts.getent_passwd.budge.1 }}
-      - PGID={{ service_ids.ansible_facts.getent_passwd.budge.2 }}
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
       - TZ={{ timezone }}
     volumes:
       - budge_config:/config

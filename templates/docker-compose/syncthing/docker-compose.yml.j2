@@ -2,12 +2,12 @@
 version: '2.3'
 services:
   syncthing:
-    image: lscr.io/linuxserver/syncthing
+    image: localhost:5000/syncthing
     container_name: syncthing
     hostname: syncthing #optional
     environment:
-      - PUID={{ service_ids.ansible_facts.getent_passwd.syncthing.1 }}
-      - PGID={{ service_ids.ansible_facts.getent_passwd.syncthing.2 }}
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
       - TZ={{ timezone }}
     volumes:
       - st_config:/config

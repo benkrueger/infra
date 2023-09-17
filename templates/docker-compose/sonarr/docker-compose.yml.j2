@@ -2,11 +2,11 @@
 version: '2.3'
 services:
   sonarr:
-    image: lscr.io/linuxserver/sonarr
+    image: localhost:5000/sonarr
     container_name: sonarr
     environment:
-      - PUID={{ service_ids.ansible_facts.getent_passwd.sonarr.1 }}
-      - PGID={{ service_ids.ansible_facts.getent_passwd.sonarr.2}}
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
       - TZ={{ timezone }}
     volumes:
       - sonarr_config:/config

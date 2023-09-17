@@ -2,13 +2,15 @@
 version '2.3'
 services:
   samba:
-    image: dperson/samba
+    image: localhost:5000/samba
     container_name: samba
     restart: always
     stdin_open: true
     tty: true
     environment:
       TZ: {{ timezone }}
+      USERID: "{{ PUID }}"
+      GROUPID: "{{ PGID }}"
 
       # advertise shares, default: true, or false (open ports 137, 138)
       NMBD: "false"
@@ -22,10 +24,9 @@ services:
       #USER: "yourname;password"
 
       # set the UID for the samba share, default: ""
-      USERID: "{{ service_ids.ansible_facts.getent_passwd.samba.1 }}"
 
       # set the GID for the samba share, default: ""
-      GROUPID: "{{ service_ids.ansible_facts.getent_passwd.samba.2 }}"
+
 
       # add a single share. If you need more, use command instead of environment
       # required arg: "<name>;</path>"
@@ -63,3 +64,4 @@ services:
       - /mainarray/media:/mainarray/media:z # :z allows share to be used by multiple containers
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
+

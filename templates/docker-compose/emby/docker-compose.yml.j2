@@ -2,11 +2,11 @@
 version: "2.3"
 services:
   emby:
-    image: lscr.io/linuxserver/emby:latest
+    image: localhost:5000/emby:latest
     container_name: emby
     environment:
-      - PUID={{ service_ids.ansible_facts.getent_passwd.emby.1 }}
-      - PGID={{ service_ids.ansible_facts.getent_passwd.emby.2 }}
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
       - TZ={{ timezone }}
     volumes:
       - emby_config:/config

@@ -1,14 +1,16 @@
 ---
 version: "2.3"
 services:
-  # Beggining of crucial diagnostics and update services
+  # Beginning of crucial diagnostics and update services
   watchtower:
-    image: containrrr/watchtower
+    image: localhost:5000/watchtower
     restart: always
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /etc/timezone:/etc/timezone:ro
     environment:
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
       - WATCHTOWER_CLEANUP=true
       - WATCHTOWER_LABEL_ENABLE=true
       - WATCHTOWER_INCLUDE_RESTARTING=true

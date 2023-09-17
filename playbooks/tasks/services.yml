@@ -1,0 +1,53 @@
+services:
+  - name: airsonic-advanced
+    fileaccess: true
+  - name: boinc
+    fileaccess: false
+  - name: cadvisor
+    fileaccess: false
+  - name: cyberchef
+    fileaccess: false
+  - name: davos
+    fileaccess: true
+  - name: diskover
+    fileaccess: true
+  - name: emby
+    fileaccess: true
+  - name: endlessh
+    fileaccess: false
+  - name: foldingathome
+    fileaccess: false
+  - name: jackett
+    fileaccess: true
+  - name: librespeed
+    fileaccess: false
+  - name: lidarr
+    fileaccess: true
+  - name: ombi
+    fileaccess: false
+  - name: overseerr
+    fileaccess: true
+  - name: plex
+    fileaccess: true
+  - name: projectsend
+    fileaccess: false
+  - name: prowlarr
+    fileaccess: true
+  - name: radarr
+    fileaccess: true
+  - name: rutorrent
+    fileaccess: true
+  - name: samba
+    fileaccess: true
+  - name: scrutiny
+    fileaccess: true
+  - name: sonarr
+    fileaccess: true
+  - name: searxng
+    fileaccess: false
+  - name: syncthing
+    fileaccess: true
+  - name: watchtower
+    fileaccess: false
+  - name: zoneminder
+    fileaccess: true

@@ -2,7 +2,7 @@
 version: '2.3'
 services:
   zoneminder:
-    image: aptalca/zoneminder-1.29
+    image: localhost:5000/zoneminder:latest
     privileged: true
     ports:
       - "8035:80"
@@ -11,8 +11,8 @@ services:
       - /tank/stuff/zm:/video
     environment:
       - TZ={{ timezone }}
-      - PUID={{ service_ids.ansible_facts.getent_passwd.zoneminder.1 }}
-      - PGID={{ service_ids.ansible_facts.getent_passwd.zoneminder.2 }}
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
     labels:
       - "com.centurylinklabs.watchtower.enable=true"
 volumes:

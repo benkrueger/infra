@@ -1,7 +1,5 @@
 ---
-- hosts: localhost
   vars:
-    services: ['endlessh','boinc','smokeping','cyberchef','searxng','foldingathome','cadvisor','syncthing','diskover','emby','davos','jackett','jellyfin','lidarr','radarr','sonarr','plex','samba','prowlarr','scrutiny','watchtower','ttrss','zoneminder']
     service_ids:
     davos_download: /tank/davos
     torrent_blackhole: /tank/stuff/blackhole
@@ -11,24 +9,30 @@
   tasks:
     - name: Create service directories
       ansible.builtin.file:
-        path: "/home/{{ admin_username }}/{{ item }}"
-        owner: "{{ admin_username }}"
-        group: "{{ admin_username }}"
+        path: "/home/{{ item.name }}/{{ item.name }}"
+        owner: "{{ item.name }}"
+        group: "{{ item.name }}"
         state: directory
-      loop: "{{ services }}"
-    - name: Get service uid/gid
-      ansible.builtin.user:
-        name: "{{ admin_username }}"
-        groups: "docker,fileaccess"
-        append: yes
       loop: "{{ services }}"
     - name: Get service uid/gid
       become: yes
       ansible.builtin.getent:
         database: passwd
+        key: "{{ item.name }}"
       register: service_ids
+      loop: "{{ services }}"
+    - name: Get fileaccess gid
+      become: yes
+      ansible.builtin.getent:
+        database: group
+        key: "fileaccess"
+      register: fileaccess_gid
     - name: Write docker-compose templates
       template:
-        src: ../../templates/docker-compose/{{ item }}/docker-compose.yml.j2
-        dest: "/home/{{ admin_username }}/{{ item }}/docker-compose.yml"
+        src: "../../templates/docker-compose/{{ item.name }}/docker-compose.yml.j2"
+        dest: "/home/{{ item.name }}/{{ item.name }}/docker-compose.yml"
+        vars:
+          PUID: "{{ service_ids[item.name].uid }}"
+          PGID: "{{ item.fileaccess ? fileaccess_gid.gid : service_ids[item.name].gid }}"
+          TZ: "{{ timezone }}"
       loop: "{{ services }}"

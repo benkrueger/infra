@@ -1,11 +1,11 @@
 version: '2'
 services:
   diskover:
-    image: lscr.io/linuxserver/diskover
+    image: localhost:5000/diskover
     container_name: diskover
     environment:
-      - PUID={{ service_ids.ansible_facts.getent_passwd.diskover.1 }}
-      - PGID={{ service_ids.ansible_facts.getent_passwd.diskover.2 }}
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
       - TZ={{ timezone }}
       - ES_HOST=elasticsearch
       - ES_PORT=9200
@@ -20,7 +20,7 @@ services:
       - elasticsearch
   elasticsearch:
     container_name: elasticsearch
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.10.2
+    image: localhost:5000/elasticsearch:7.10.2
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=true
@@ -38,7 +38,7 @@ services:
       - elasticsearch-helper
     restart: unless-stopped
   elasticsearch-helper:
-    image: alpine
+    image: localhost:5000/alpine
     command: sh -c "sysctl -w vm.max_map_count=262144"
     privileged: true
 volumes:

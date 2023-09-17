@@ -2,11 +2,11 @@
 version: '2.3'
 services:
   lidarr:
-    image: lscr.io/linuxserver/lidarr
+    image: localhost:5000/lidarr
     container_name: lidarr
     environment:
-      - PUID={{ service_ids.ansible_facts.getent_passwd.lidarr.1 }}
-      - PGID={{ service_ids.ansible_facts.getent_passwd.lidarr.2 }}
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
       - TZ={{ timezone }}
     volumes:
       - lidarr_config_vol:/config

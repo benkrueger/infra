@@ -2,12 +2,12 @@
 version: "2.1"
 services:
   foldingathome:
-    image: lscr.io/linuxserver/foldingathome:latest
+    image: localhost:5000/foldingathome:latest
     container_name: foldingathome
     cpus: 2
     environment:
-      - PUID={{ service_ids.ansible_facts.getent_passwd.foldingathome.1 }}
-      - PGID={{ service_ids.ansible_facts.getent_passwd.foldingathome.2 }}
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
       - TZ={{ timezone }}
     volumes:
       - fah_config:/config

@@ -2,8 +2,11 @@
 version: "2.3"
 services:
   cyberchef:
-    image: mpepping/cyberchef
+    image: localhost:5000/cyberchef
     container_name: cyberchef
+    environment:
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
     ports:
       - 8002:8000
     labels:

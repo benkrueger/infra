@@ -1,13 +1,27 @@
 ---
-- hosts: localhost
   vars:
-    services: ['endlessh','boinc','smokeping','cyberchef','searxng','foldingathome','cadvisor','syncthing','diskover','emby','davos','jackett','jellyfin','lidarr','radarr','sonarr','plex','samba','prowlarr','scrutiny','watchtower','ttrss','zoneminder']
-    service_ids:
-    timezone: 'America/Chicago'
-    admin_username: ""
+    services_file: "services.yml"
   tasks:
-    name: "Find external port mapping in compose files"
-    ansible.builtin.lineinfile:
-      path: "/home/{{ admin_username}}/{{ item }}"
-      regexp: "\n\s+(\d+):\d+"
-    loop: "services"
+    - name: "Load services from services.yml"
+      include_vars:
+        file: "{{ services_file }}"
+        name: services
+    - name: "Find external port mapping in compose files"
+      shell: "grep -Po '(\d+):\d+' /home/{{ item }}/docker-compose.yml"
+      register: ports
+      loop: "{{ services }}"
+
+    - name: "Ensure no duplicate ports"
+      assert:
+        that: "{{ ports.results | map(attribute='stdout_lines') | flatten | unique | length == ports.results | map(attribute='stdout_lines') | flatten | length }}"
+        fail_msg: "Duplicate ports found"
+
+    - name: "Allow all exposed ports through UFW using docker-ufw"
+      become: yes
+      shell: "docker-ufw allow {{ item }}"
+      loop: "{{ ports.results | map(attribute='stdout_lines') | flatten }}"
+
+    - name: "Output list of services and their ports"
+      debug:
+        msg: "Service: {{ item.item }}, Ports: {{ item.stdout_lines }}"
+      loop: "{{ ports.results }}"

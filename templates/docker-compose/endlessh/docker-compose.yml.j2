@@ -2,11 +2,11 @@
 version: '2.3'
 services:
   endlessh:
-    image: lscr.io/linuxserver/endlessh
+    image: localhost:5000/endlessh
     container_name: endlessh
     environment:
-      - PUID={{ service_ids.ansible_facts.getent_passwd.endlessh.1 }}
-      - PGID={{ service_ids.ansible_facts.getent_passwd.endlessh.2 }}
+      - PUID={{ PUID }}
+      - PGID={{ PGID }}
       - TZ={{ timezone }}
       - MSDELAY=10000 #optional
       - MAXLINES=32 #optional

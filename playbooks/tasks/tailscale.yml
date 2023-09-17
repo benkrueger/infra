@@ -1,16 +1,27 @@
-# Install necessary dependencies to get NAS up and running.
-- hosts: localhost
-  vars:
-    tailscale:
-    tailscale_login:
-  tasks:
-  - name: Install tailscale repos
-    become: yes
-    command: ../../scripts/add_tailscale_repos.sh
-  - name: Install tailscale package
-    become: yes
-    ansible.builtin.apt:
-      name: tailscale
-      state: present
+- name: Install apt-transport-https plugin
+  become: yes
+  apt:
+    name: apt-transport-https
+    state: present
+  ignore_errors: yes
 
-  
+- name: Add Tailscale’s package signing key and repository
+  become: yes
+  shell: |
+    curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/xenial.gpg | sudo apt-key add -
+    curl -fsSL https://pkgs.tailscale.com/stable/ubuntu/xenial.list | sudo tee /etc/apt/sources.list.d/tailscale.list
+  ignore_errors: yes
+
+- name: Install Tailscale
+  become: yes
+  apt:
+    update_cache: yes
+    name: tailscale
+    state: present
+  ignore_errors: yes
+
+- name: Start Tailscale service with predefined key
+  become: yes
+  shell: tailscale up --authkey={{ tailscale_authkey }}
+  ignore_errors: yes
+

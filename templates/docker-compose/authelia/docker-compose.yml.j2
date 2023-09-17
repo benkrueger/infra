@@ -3,7 +3,7 @@ version: "3.8"
 services:
   authelia:
     container_name: authelia
-    image: docker.io/authelia/authelia:latest
+    image: localhost:5000/authelia/authelia:latest
     restart: unless-stopped
     networks:
       net:
@@ -11,8 +11,8 @@ services:
     expose:
       - 9091
     environment:
-      PUID: {{ service_ids.ansible_facts.getent_passwd.authelia.1 }}
-      PGID: {{ service_ids.ansible_facts.getent_passwd.authelia.2 }}
+      PUID: {{ PUID }}
+      PGID: {{ PGID }}
       TZ: {{ timezone }}
       AUTHELIA_JWT_SECRET_FILE: /secrets/JWT_SECRET
       AUTHELIA_SESSION_SECRET_FILE: /secrets/SESSION_SECRET

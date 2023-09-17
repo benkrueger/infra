@@ -1,22 +1,18 @@
-# Clean up docker-compose service volumes, images and networks
 ---
-- hosts: localhost
-  vars:
-    services: ['endlessh','boinc','smokeping','cyberchef','searxng','foldingathome','cadvisor','syncthing','diskover','emby','davos','jackett','jellyfin','lidarr','radarr','sonarr','plex','samba','prowlarr','scrutiny','watchtower','ttrss','zoneminder']
-    admin_username: ""
   tasks:
-    tasks:
-    - name: Docker-compose kill the services!
-      command: docker-compose kill
+    - name: Read services from services.yml
+      include_vars:
+        file: services.yml
+        name: services
+    - name: Stop all services listed in the service.yml file
+      command: systemctl stop {{ item }}
       become: yes
-      become_user: "{{ admin_username }}" 
-      args:
-        chdir: "/home/{{ admin_username }}/{{ item }} "
       loop: "{{ services }}"
-    - name: Docker-compose rm
-      command: docker-compose rm -f
+    - name: Navigate to the home directory of the service user
+      command: cd /home/{{ item }}
       become: yes
-      become_user: "{{ admin_username }}" 
-      args:
-        chdir: "/home/{{ admin_username }}/{{ item }} "
+      loop: "{{ services }}"
+    - name: Execute docker-compose.yml to cleanup the service from docker
+      command: docker-compose down --rmi all --volumes
+      become: yes
       loop: "{{ services }}"
