@@ -1,8 +1,0 @@
----
-vars:
-  services: ['cadvisor','librespeed','watchtower','scrutiny','jellyfin','samba']
-  timezone: 'America/Chicago'
-  compose_root: ./
-  admin_user_id: "1000"
-  fileaccess_gid: "1001"
-  librespeed_password: 

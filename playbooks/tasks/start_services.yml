@@ -1,6 +1,0 @@
-# Fire up the docker-compose services!
----
-- hosts: localhost
-  vars:
-  tasks:
-    - name: 

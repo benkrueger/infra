@@ -19,10 +19,15 @@ provider "vultr" {
     api_key = var.VULTR_API_KEY
 }
 provider "cloudflare" {
-  api_token = var.cloudflare_api_token
+    api_token = var.cloudflare_api_token
 }
 variable "VULTR_API_KEY" {}
 variable "cloudflare_api_token" {}
+
+resource "vultr_ssh_key" "my_key" {
+  name = "My SSH Key"
+  ssh_key = file("~/.ssh/id_rsa.pub")
+}
 
 resource "vultr_instance" "cloudgw" {
     plan = "vc2-1c-1gb"
@@ -38,18 +43,20 @@ resource "vultr_instance" "cloudgw" {
     }
     ddos_protection = false
     activation_email = true
+    ssh_key_ids = [vultr_ssh_key.my_key.id] 
 }
-resource "cloudflare_record" "singleArecord" {
-  zone_id = var.cloudflare_zone_id
+
+resource "cloudflare_record" "cloud_gateway_a" {
+  zone_id = "4637700cabe8a9ecba29c4eeb71e14b7"
   name    = "terraform_A"
-  value   = vultr_instance.main_ip
+  value   = vultr_instance.cloudgw.main_ip
   type    = "A"
   ttl     = 3600
 }
-resource "cloudflare_record" "quadArecord" {
-  zone_id = var.cloudflare_zone_id
+resource "cloudflare_record" "cloud_gateway_aaaa" {
+  zone_id = "4637700cabe8a9ecba29c4eeb71e14b7"
   name    = "terraform_AAAA"
-  value   = vultr_instance.v6_main_ip
+  value   = vultr_instance.cloudgw.v6_main_ip
   type    = "AAAA"
   ttl     = 3600
 }

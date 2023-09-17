@@ -1,8 +1,0 @@
-# Configure zfs storage arrays.
----
-- hosts: localhost
-  vars:
-    tank:
-    mainarray:
-  tasks:
-    - name: 
