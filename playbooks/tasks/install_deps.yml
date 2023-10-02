@@ -1,59 +1,68 @@
 ---
-  vars:
+- hosts: all
   tasks:
-  - name: Install zfsutils
-    become: yes
-    ansible.builtin.apt:
-      name: zfsutils
-      state: present
-    ignore_errors: no
-  - name: Install docker
-    become: yes
-    ansible.builtin.apt:
-      name: docker
-      state: present
-    ignore_errors: no
-  - name: Install docker-compose
-    become: yes
-    ansible.builtin.apt:
-      name: docker-compose
-      state: present
-    ignore_errors: no
-  - name: Download docker-slim tarball
-    command: curl -L -o ds.tar.gz https://downloads.dockerslim.com/releases/1.38.0/dist_linux.tar.gz
-    ignore_errors: yes
-  - name: Extract docker-slim tarball
-    command: tar -xvf ds.tar.gz
-    ignore_errors: yes
-  - name: Move docker-slim to /usr/local/bin
-    become: yes
-    command: mv dist_linux/docker-slim /usr/local/bin
-    ignore_errors: yes
-  - name: Move docker-slim-sensor to /usr/local/bin
-    become: yes
-    command: mv dist_linux/docker-slim-sensor /usr/local/bin
-    ignore_errors: yes
-  - name: Remove docker-slim artifacts
-    command: rm -rf ds.tar.gz dist_linux
-    ignore_errors: yes
-  - name: Add gVisor keyring
-    become: yes
-    ansible.builtin.shell:
-      cmd: |
-        curl -fsSL https://gvisor.dev/archive.key | sudo gpg --dearmor -o /usr/share/keyrings/gvisor-archive-keyring.gpg
-    ignore_errors: yes
-  - name: Add gVisor repository
-    become: yes
-    ansible.builtin.shell:
-      cmd: |
-        echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/gvisor-archive-keyring.gpg] https://storage.googleapis.com/gvisor/releases release main" | sudo tee /etc/apt/sources.list.d/gvisor.list > /dev/null
-    ignore_errors: yes
-  - name: Install gVisor package
-    become: yes
-    ansible.builtin.apt:
-      name: runsc
-      state: present
-      update_cache: yes
-    ignore_errors: yes
-    failed_when: false
-
+    - name: Install zfsutils
+      become: yes
+      apt:
+        name: zfsutils
+        state: present
+      ignore_errors: no
+    - name: Install docker
+      become: yes
+      apt:
+        name: docker
+        state: present
+      ignore_errors: no
+    - name: Install docker-compose
+      become: yes
+      apt:
+        name: docker-compose
+        state: present
+      ignore_errors: no
+    - name: Install docker nvidia container acceleration
+      become: yes
+      shell:
+        cmd: |
+          distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+          curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+          curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+          apt-get update && sudo apt-get install -y nvidia-container-toolkit
+          systemctl restart docker
+      ignore_errors: yes
+    - name: Download docker-slim tarball
+      command: curl -L -o ds.tar.gz https://downloads.dockerslim.com/releases/1.38.0/dist_linux.tar.gz
+      ignore_errors: yes
+    - name: Extract docker-slim tarball
+      command: tar -xvf ds.tar.gz
+      ignore_errors: yes
+    - name: Move docker-slim to /usr/local/bin
+      become: yes
+      command: mv dist_linux/docker-slim /usr/local/bin
+      ignore_errors: yes
+    - name: Move docker-slim-sensor to /usr/local/bin
+      become: yes
+      command: mv dist_linux/docker-slim-sensor /usr/local/bin
+      ignore_errors: yes
+    - name: Remove docker-slim artifacts
+      command: rm -rf ds.tar.gz dist_linux
+      ignore_errors: yes
+    - name: Add gVisor keyring
+      become: yes
+      shell:
+        cmd: |
+          curl -fsSL https://gvisor.dev/archive.key | sudo gpg --dearmor -o /usr/share/keyrings/gvisor-archive-keyring.gpg
+      ignore_errors: yes
+    - name: Add gVisor repository
+      become: yes
+      shell:
+        cmd: |
+          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/gvisor-archive-keyring.gpg] https://storage.googleapis.com/gvisor/releases release main" | sudo tee /etc/apt/sources.list.d/gvisor.list > /dev/null
+      ignore_errors: yes
+    - name: Install gVisor package
+      become: yes
+      apt:
+        name: runsc
+        state: present
+        update_cache: yes
+      ignore_errors: yes
+      failed_when: false

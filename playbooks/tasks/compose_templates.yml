@@ -1,38 +1,83 @@
 ---
+- hosts: all
   vars:
-    service_ids:
     davos_download: /tank/davos
     torrent_blackhole: /tank/stuff/blackhole
     plex_claim: "token"
     timezone: 'America/Chicago'
-    admin_username: ""
+    mainarray_media: "/mainarray/media"
   tasks:
-    - name: Create service directories
-      ansible.builtin.file:
-        path: "/home/{{ item.name }}/{{ item.name }}"
-        owner: "{{ item.name }}"
-        group: "{{ item.name }}"
-        state: directory
-      loop: "{{ services }}"
-    - name: Get service uid/gid
+    - name: Read services.yml
       become: yes
-      ansible.builtin.getent:
-        database: passwd
-        key: "{{ item.name }}"
-      register: service_ids
-      loop: "{{ services }}"
+      include_vars:
+        file: services.yml
+
+    - name: Debug output
+      debug:
+        msg: "{{ services | map(attribute='name') | list }}"
+
+    - name: Define service_names
+      set_fact:
+        service_names: "{{ services | map(attribute='name') | list }}"
+
+    - name: Set shared storage directory access controls for tank and blackhole
+      become: yes
+      ansible.builtin.file:
+        path: "{{ item }}"
+        owner: "{{ admin_username }}"
+        group: fileaccess
+        state: directory
+        recurse: yes
+      loop: 
+        - "{{ davos_download }}"
+        - "{{ torrent_blackhole }}"
+
+    - name: Set shared storage directory access controls for mainarray
+      become: yes
+      ansible.builtin.file:
+        path: "{{ mainarray_media }}"
+        owner: "{{ admin_username }}"
+        group: fileaccess
+        state: directory
+        recurse: yes
+
     - name: Get fileaccess gid
       become: yes
       ansible.builtin.getent:
         database: group
         key: "fileaccess"
       register: fileaccess_gid
-    - name: Write docker-compose templates
-      template:
-        src: "../../templates/docker-compose/{{ item.name }}/docker-compose.yml.j2"
-        dest: "/home/{{ item.name }}/{{ item.name }}/docker-compose.yml"
-        vars:
-          PUID: "{{ service_ids[item.name].uid }}"
-          PGID: "{{ item.fileaccess ? fileaccess_gid.gid : service_ids[item.name].gid }}"
-          TZ: "{{ timezone }}"
+
+    - name: Debug fileaccess_gid
+      debug:
+        var: fileaccess_gid
+
+    - name: Check if fileaccess key exists in fileaccess_gid
+      fail:
+        msg: "fileaccess key not found in fileaccess_gid"
+      when: fileaccess_gid is undefined or fileaccess_gid['ansible_facts']['getent_group']['fileaccess'] is undefined
+
+    - name: Register service user id for each service
+      become: yes
+      ansible.builtin.getent:
+        database: passwd
+        key: "{{ item.name }}"
+      register: service_user_id
       loop: "{{ services }}"
+    - name: Debug service_user_id
+      debug:
+        var: service_user_id
+    - name: Write docker-compose templates
+      become: yes
+      block:
+        - name: Write docker-compose template
+          template:
+            src: "../../templates/docker-compose/{{ item.name }}/docker-compose.yml.j2"
+            dest: "/home/{{ item.name }}/{{ item.name }}/docker-compose.yml"
+            vars:
+              PUID: "{{ service_user_id.results[item]['ansible_facts']['getent_passwd'][item.name][1] }}"
+              PGID: "{{ fileaccess_gid['ansible_facts']['getent_group']['fileaccess'] if item.fileaccess else service_user_id['ansible_facts']['getent_passwd'][item.name][3] }}"
+              TZ: "{{ timezone }}"
+          loop: "{{ services }}"
+          ignore_errors: yes
+

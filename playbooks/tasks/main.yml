@@ -1,10 +1,10 @@
 #This playbook installs everything I need on my Network Attached Storage.
 - hosts: localhost
 - include_tasks: install_deps.yml
+- include_tasks: zfs_arrays.yml
 - include_tasks: user_setup.yml
 - include_tasks: template_services.yml
 - include_tasks: install_sectools.yml
 - include_tasks: harden_ssh.yml
-- include_tasks: zfs_arrays.yml
 - include_tasks: start_services.yml
 - include_tasts: tailscale.yml

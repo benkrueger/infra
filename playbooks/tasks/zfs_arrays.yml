@@ -1,18 +1,36 @@
 ---
-- hosts: localhost
+- name: Setup ZFS arrays
+  hosts: all
   vars:
     tank: tank
     mainarray: mainarray
   tasks:
     - name: Check if zfs is installed
+      become: yes
       command: zfs --version
-      register: zfs_installed
-      failed_when: "'command not found' in zfs_installed.stderr"
+      register: zfs_installed_result
+      ignore_errors: yes
+    - name: Set zfs_installed
+      set_fact:
+        zfs_installed: "{{ zfs_installed_result | default({'rc': 1}) }}"
+    - name: Check if zfs arrays exist
+      become: yes
+      command: zpool list | grep {{ item }}
+      register: zfs_array_exists_result
+      ignore_errors: yes
+      with_items:
+        - "{{ tank }}"
+        - "{{ mainarray }}"
+    - name: Set zfs_array_exists
+      set_fact:
+        zfs_array_exists: "{{ zfs_array_exists_result | default({'rc': 1}) }}"
     - name: Import zfs arrays
+      become: yes
       command: zpool import {{ item }}
       with_items:
         - "{{ tank }}"
         - "{{ mainarray }}"
+      ignore_errors: yes
     - name: Check if docker is installed
       command: docker --version
       register: docker_installed
@@ -20,6 +38,7 @@
     - name: Configure docker to use zfs
       block:
         - name: Update docker-daemon.json
+          become: yes
           copy:
             dest: /etc/docker/daemon.json
             content: |
@@ -27,7 +46,9 @@
                 "storage-driver": "zfs"
               }
         - name: Create zfs dataset for docker volumes
+          become: yes
           command: zfs create {{ tank }}/docker-volumes
         - name: Configure docker to use zfs dataset
+          become: yes
           command: docker volume create -d local -o type=zfs -o device={{ tank }}/docker-volumes docker-volumes
-      when: docker_installed.rc == 0
+
