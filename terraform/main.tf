@@ -23,12 +23,12 @@ provider "cloudflare" {
 }
 variable "VULTR_API_KEY" {}
 variable "cloudflare_api_token" {}
-
+/*
 resource "vultr_ssh_key" "my_key" {
   name = "My SSH Key"
   ssh_key = file("~/.ssh/id_rsa.pub")
 }
-
+*/
 resource "vultr_instance" "cloudgw" {
     plan = "vc2-1c-1gb"
     region = "ord"
@@ -43,7 +43,7 @@ resource "vultr_instance" "cloudgw" {
     }
     ddos_protection = false
     activation_email = true
-    ssh_key_ids = [vultr_ssh_key.my_key.id] 
+    //ssh_key_ids = [vultr_ssh_key.my_key.id] 
 }
 
 resource "cloudflare_record" "cloud_gateway_a" {
