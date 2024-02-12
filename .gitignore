@@ -2,5 +2,4 @@ output
 *.tfvars
 *.tfstate
 *.backup
-./terraform/terraform.tfvars
 terraform/terraform.tfvars
